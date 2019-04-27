@@ -52,10 +52,14 @@ module OmniAuth
         else
           super
         end
+      rescue ::OAuth::Unauthorized => e
+        return fail(e) if e.message != '404 Not Found'
+
+        fail!(:site_not_found)
       rescue URI::InvalidURIError
-        return fail!(:invalid_site)
+        fail!(:invalid_site)
       rescue Net::HTTPRetriableError
-        return fail!(:invalid_site)
+        fail!(:invalid_site)
       end
 
       def callback_phase
